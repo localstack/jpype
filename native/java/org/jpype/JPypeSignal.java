@@ -53,8 +53,23 @@ public class JPypeSignal
           return null;
         }
       });
+      Object termHandler = Proxy.newProxyInstance(ClassLoader.getSystemClassLoader(), new Class[]
+              {
+                      SignalHandler
+              }, new InvocationHandler()
+      {
+        @Override
+        public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+        {
+          main.interrupt();
+          interruptPyTerm();
+          return null;
+        }
+      });
       Object intr = Signal.getDeclaredConstructor(String.class).newInstance("INT");
       method.invoke(null, intr, handler);
+      Object intrTerm = Signal.getDeclaredConstructor(String.class).newInstance("TERM");
+      method.invoke(null, intrTerm, termHandler);
     } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException | InstantiationException | ClassNotFoundException | NoSuchMethodException | SecurityException ex)
     {
       // If we don't get the signal handler run without it.  (ANDROID)
@@ -62,5 +77,6 @@ public class JPypeSignal
   }
 
   native static void interruptPy();
+  native static void interruptPyTerm();
   native static void acknowledgePy();
 }

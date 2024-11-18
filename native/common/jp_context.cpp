@@ -452,6 +452,13 @@ extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_interruptPy
 	PyErr_SetInterrupt();
 }
 
+extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_interruptPyTerm
+(JNIEnv *env, jclass cls)
+{
+	interruptState = 1;
+	PyErr_SetInterruptEx(15);
+}
+
 extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_acknowledgePy
 (JNIEnv *env, jclass cls)
 {
