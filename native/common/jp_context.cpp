@@ -446,17 +446,10 @@ extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeContext_onShutdown
 
 static int interruptState = 0;
 extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_interruptPy
-(JNIEnv *env, jclass cls)
+(JNIEnv *env, jclass cls, jint signal)
 {
 	interruptState = 1;
-	PyErr_SetInterrupt();
-}
-
-extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_interruptPyTerm
-(JNIEnv *env, jclass cls)
-{
-	interruptState = 1;
-	PyErr_SetInterruptEx(15);
+	PyErr_SetInterruptEx((int) signal);
 }
 
 extern "C" JNIEXPORT void JNICALL Java_org_jpype_JPypeSignal_acknowledgePy
