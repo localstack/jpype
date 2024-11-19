@@ -62,12 +62,14 @@ jobs:
   upload_pypi:
     needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
-    environment: pypi
-    # permissions:
-    #   id-token: write
+    environment:
+      name: pypi
+      url: https://pypi.org/p/jpype1-ext
+    permissions:
+      id-token: write
     # if: github.event_name == 'release' && github.event.action == 'published'
     # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -77,3 +79,5 @@ jobs:
           merge-multiple: true
       - name: List artifacts
         run: ls -lah dist/
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
