@@ -7,6 +7,11 @@ JPype
    
 |implementation|  |pyversions|  |javaversions|  |jvm|  |platform|  |license|
 
+Why this fork for LocalStack?
+--------------
+We forked the jpype project to add a SIGTERM signal handler to be used in `LocalStack <https://github.com/localstack/localstack>`
+We plan on contributing the changes upstream, should they be accepted.
+
 JPype is a Python module to provide full access to Java from 
 within Python. It allows Python to make use of Java only libraries,
 exploring and visualization of Java structures, development and testing
