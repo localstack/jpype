@@ -1,0 +1,79 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+
+jobs:
+  build_wheels:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        # macos-13 is an intel runner, macos-14 is apple silicon
+        pyver: [ cp311, cp312 ]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Used to host cibuildwheel
+      - name: Setup python
+        uses: actions/setup-python@v5
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: all
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          # configure cibuildwheel to build native archs ('auto'), and some
+          # emulated ones
+          CIBW_BUILD: ${{matrix.pyver}}-*
+          CIBW_ARCHS_LINUX: auto aarch64
+          CIBW_BEFORE_ALL_LINUX: >
+            yum install -y java-11-openjdk-devel
+          CIBW_SKIP: '*-musllinux_*'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.pyver }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        run: pipx run build --sdist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
+
+  upload_pypi:
+    needs: [build_wheels, build_sdist]
+    runs-on: ubuntu-latest
+    environment: pypi
+    # permissions:
+    #   id-token: write
+    # if: github.event_name == 'release' && github.event.action == 'published'
+    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
+    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          # unpacks all CIBW artifacts into dist/
+          pattern: cibw-*
+          path: dist
+          merge-multiple: true
+      - name: List artifacts
+        run: ls -lah dist/
