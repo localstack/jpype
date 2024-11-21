@@ -8,7 +8,7 @@ JPype
 |implementation|  |pyversions|  |javaversions|  |jvm|  |platform|  |license|
 
 Why this fork for LocalStack?
---------------
+-----------------------------
 We forked the jpype project to add a SIGTERM signal handler to be used in `LocalStack <https://github.com/localstack/localstack>`
 We plan on contributing the changes upstream, should they be accepted.
 
