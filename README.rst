@@ -10,7 +10,7 @@ JPype
 Why this fork for LocalStack?
 -----------------------------
 We forked the jpype project to add a SIGTERM signal handler to be used in `LocalStack <https://github.com/localstack/localstack>`
-We plan on contributing the changes upstream, should they be accepted.
+We since contributed these changes upstream, and therefore this repository is archived.
 
 JPype is a Python module to provide full access to Java from 
 within Python. It allows Python to make use of Java only libraries,
